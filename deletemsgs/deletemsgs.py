@@ -14,7 +14,7 @@ class DeleteMsgs(commands.Cog):
     
 
     @commands.command()
-    @commands.is_owner()
+    @has_permissions(administrator=True)
     async def nuke(self, ctx, channel_name: discord.TextChannel):
         """Deletes a channel mentioned by the server/bot owner."""
         if channel_name is not None:
