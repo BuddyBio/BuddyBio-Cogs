@@ -1,5 +1,5 @@
 {
-    "author": "BuddyBio",
+    "author": ["BuddyBio"],
     "description": "Nukes an entire chat.",
     "install_msg": "You have just installed 'deltemsgs' cog.",
     "short": "Nukes an entire chat."
