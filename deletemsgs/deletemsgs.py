@@ -27,15 +27,18 @@ class DeleteMsgs(commands.Cog):
     @commands.command()
     async def autodelete(self, ctx, value):
         """Use on/off to enable or disable autodelete function."""
-        if value == "on":
-           global trigger
-           trigger = True
-           await ctx.send("You turned on the autodeletion.")
-        elif value == "off":
-            trigger = False
-            await ctx.send("You turned off the autodeletion.")
+        if ctx.message.author.guild_permissions.administrator:
+            if value == "on":
+                global trigger
+                trigger = True
+                await ctx.send("You turned on the autodeletion.")
+            elif value == "off":
+                    trigger = False
+                    await ctx.send("You turned off the autodeletion.")
+            else:
+                    await ctx.send("You gave a wrong value")
         else:
-            await ctx.send("You gave a wrong value")
+            await ctx.send("You don't have permission to do that.")
 
     @commands.Cog.listener()
     async def on_member_remove(self,member):
