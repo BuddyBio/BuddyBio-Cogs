@@ -15,7 +15,7 @@ class DeleteMsgs(commands.Cog):
 
     @commands.command()
     async def nuke(self, ctx, channel_name: discord.TextChannel):
-        """Deletes a channel mentioned by the server owner / Aadministrator Role."""
+        """Deletes a channel mentioned by the server owner/Administrator Role."""
         if ctx.message.author.guild_permissions.administrator:
             if channel_name is not None:
                 await channel_name.clone(reason="Has been nuked")
