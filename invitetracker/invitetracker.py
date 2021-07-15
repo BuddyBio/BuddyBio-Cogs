@@ -156,7 +156,7 @@ class InviteTracker(commands.Cog):
         logs_channel = await self.config.guild(member.guild).channel()
         logs = self.bot.get_channel(logs_channel)
         embed = discord.Embed(
-            description="Just joined the server", color=0x03D692, title=" "
+            description="**Just joined the server**", color=0x03D692, title=" "
         )
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.set_footer(text="ID: " + str(member.id))
@@ -167,8 +167,8 @@ class InviteTracker(commands.Cog):
             for invite in invs_before:
                 if invite.uses < self.find_invite_by_code(invs_after, invite.code).uses:
                     embed.add_field(
-                        name="Used invite",
-                        value=f"Inviter: {invite.inviter.mention} (`{invite.inviter}` | `{str(invite.inviter.id)}`)\nCode: `{invite.code}`\nUses: ` {str(invite.uses)} `",
+                        name="**Used invite**",
+                        value=f"**Inviter: {invite.inviter.mention} (`{invite.inviter}` | `{str(invite.inviter.id)}`)\nCode: `{invite.code}`\nUses: ` {str(invite.uses)} `**",
                         inline=False,
                     )
         except Exception as e:
@@ -185,7 +185,7 @@ class InviteTracker(commands.Cog):
         logs_channel = await self.config.guild(member.guild).channel()
         logs = self.bot.get_channel(int(logs_channel))
         embed = discord.Embed(
-            description="Just left the server", color=0xFF0000, title=" "
+            description="**Just left the server**", color=0xFF0000, title=" "
         )
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.set_footer(text="ID: " + str(member.id))
@@ -197,8 +197,8 @@ class InviteTracker(commands.Cog):
             for invite in invs_before:
                 if invite.uses > self.find_invite_by_code(invs_after, invite.code).uses:
                     embed.add_field(
-                        name="Used invite",
-                        value=f"Inviter: {invite.inviter.mention} (`{invite.inviter}` | `{str(invite.inviter.id)}`)\nCode: `{invite.code}`\nUses: ` {str(invite.uses)} `",
+                        name="**Used invite**",
+                        value=f"**Inviter: {invite.inviter.mention} (`{invite.inviter}` | `{str(invite.inviter.id)}`)\nCode: `{invite.code}`\nUses: ` {str(invite.uses)} `**",
                         inline=False,
                     )
         except Exception as e:
