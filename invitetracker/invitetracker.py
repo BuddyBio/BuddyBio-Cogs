@@ -23,7 +23,8 @@ class InviteTracker(commands.Cog):
         )
         default_guild = {
             "enabled": False,
-            "channel": [],
+            "joinchannel": [],
+            "leavechannel": [],
             "joinenabled": True,
             "leaveenabled": True,
         }
@@ -65,22 +66,33 @@ class InviteTracker(commands.Cog):
     async def invitetrackerset(self, ctx):
         """Invite tracker settings
         Commands:
-        `[p]invset channel` - Sets the invite logging channel
+        `[p]invset joinch` - Sets the join invite logging channel
+        `[p]invset leavech` - Sets the leave invite logging channel
         `[p]invset enable` - Enable invite logging in your server
-        `[p]invset leaveenable` - Enable/disable leave messages
-        `[p]invset joinenable` - Enable/disable join invite messages
+        `[p]invset (join/leave)enable` - Enable/disable join/leave invite messages
+
         """
         pass
 
     @invitetrackerset.command()
-    async def channel(self, ctx, channel: discord.TextChannel):
-        """Set the invite tracker channel
+    async def leavech(self, ctx, channel: discord.TextChannel):
+        """Set the leave tracker channel
         Arguments:
-        `channel`: Select the channel for the invite logging to be sent to
+        `leavechannel`: Select the channel for the leave invite logging to be sent to
         """
         async with ctx.typing():
-            await self.config.guild(ctx.guild).channel.set(channel.id)
-            await ctx.send(f"The log channel has been set to {channel.mention}")
+            await self.config.guild(ctx.guild).leavechannel.set(channel.id)
+            await ctx.send(f"The leave log channel has been set to {channel.mention}")
+
+    @invitetrackerset.command()
+    async def joinch(self, ctx, channel: discord.TextChannel):
+        """Set the join invite tracker channel
+        Arguments:
+        `joinchannel`: Select the channel for the join invite logging to be sent to
+        """
+        async with ctx.typing():
+            await self.config.guild(ctx.guild).joinchannel.set(channel.id)
+            await ctx.send(f"The join log channel has been set to {channel.mention}")
 
     @invitetrackerset.command()
     async def enable(self, ctx, yes_or_no: bool):
@@ -130,7 +142,7 @@ class InviteTracker(commands.Cog):
                 )
 
     @commands.command(aliases=["userinvites"])
-    async def invitesforuser(self, ctx, user: discord.Member = None):
+    async def invites(self, ctx, user: discord.Member = None):
         """See how many times a user's invites have been used"""
         async with ctx.typing():
             if user == None:
@@ -153,11 +165,12 @@ class InviteTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
         """On member listener for new users"""
-        logs_channel = await self.config.guild(member.guild).channel()
+        logs_channel = await self.config.guild(member.guild).joinchannel()
         logs = self.bot.get_channel(logs_channel)
         embed = discord.Embed(
             description="**Just joined the server**", color=0x03D692, title=" "
         )
+        embed.set_image(url=member.avatar_url)
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.set_footer(text="ID: " + str(member.id))
         try:
@@ -167,8 +180,13 @@ class InviteTracker(commands.Cog):
             for invite in invs_before:
                 if invite.uses < self.find_invite_by_code(invs_after, invite.code).uses:
                     embed.add_field(
-                        name="**Used invite**",
+                        name=f"**{str(member.mention)} joined us.**",
                         value=f"**Inviter: {invite.inviter.mention} (`{invite.inviter}` | `{str(invite.inviter.id)}`)\nCode: `{invite.code}`\nUses: ` {str(invite.uses)} `**",
+                        inline=False,
+                    )
+            embed.add_field(
+                        name=f"**Note:**",
+                        value=f"**{invite.inviter.mention} thank you for the invite, {str(member.mention)} be sure you read the server rules.**",
                         inline=False,
                     )
         except Exception as e:
@@ -182,11 +200,12 @@ class InviteTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member) -> None:
         """On member listener for users leaving"""
-        logs_channel = await self.config.guild(member.guild).channel()
+        logs_channel = await self.config.guild(member.guild).leavechannel()
         logs = self.bot.get_channel(int(logs_channel))
         embed = discord.Embed(
-            description="**Just left the server**", color=0xFF0000, title=" "
+            description="**Just left the server, thanks for joining us**", color=0xFF0000, title=" "
         )
+        embed.set_image(url=member.avatar_url)
         embed.set_author(name=str(member), icon_url=member.avatar_url)
         embed.set_footer(text="ID: " + str(member.id))
         embed.timestamp = member.joined_at
